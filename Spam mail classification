@@ -1,0 +1,18 @@
+import math
+
+x = [1, 0, 1]
+h1 = [0.5, -0.2, 0.3]
+h2 = [0.9, 0.1, -0.5]
+out = [0.7, 0.2]
+
+relu = lambda z: max(0, z)
+sigmoid = lambda z: 1 / (1 + math.exp(-z))
+
+h1_out = relu(x[0]*h1[0] + x[1]*h1[1] + x[2]*h1[2])
+h2_out = relu(x[0]*h2[0] + x[1]*h2[1] + x[2]*h2[2])
+
+out_sum = h1_out*out[0] + h2_out*out[1]
+y = sigmoid(out_sum)
+
+print("Output =", y)
+print("Spam" if y > 0.5 else "Not Spam") explain the code
