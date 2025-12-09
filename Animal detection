@@ -1,0 +1,40 @@
+# ----------------------------
+#  ANIMAL DETECTION (YOLOv8)
+# ----------------------------
+!pip install ultralytics opencv-python
+import cv2
+from ultralytics import YOLO
+from google.colab.patches import cv2_imshow
+from google.colab import files
+# Load YOLOv8 model
+model = YOLO("yolov8n.pt")
+# ---- STEP 1: Upload Image ----
+uploaded = files.upload()
+image_path = list(uploaded.keys())[0]
+# Read image
+img = cv2.imread(image_path)
+if img is None:
+    raise ValueError("Image upload failed!")
+# ---- STEP 2: Run YOLO detection ----
+results = model(image_path)
+animal_classes = ["dog", "cat", "horse", "sheep", "cow", "bird"]
+found = False
+# ---- STEP 3: Draw animal detections ----
+for r in results:
+    for box in r.boxes:
+        cls = int(box.cls[0])
+        label = model.names[cls]
+        conf = float(box.conf[0])
+        if label in animal_classes:
+            found = True
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+            cv2.putText(img, f"{label} {conf:.2f}",
+                        (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.7, (255, 0, 0), 2)
+if not found:
+    print("❌ No animal detected in this image.")
+else:
+    print("✅ Animal(s) detected!")
+# ---- STEP 4: Display result ----
+cv2_imshow(img)
