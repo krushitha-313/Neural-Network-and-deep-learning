@@ -1,0 +1,20 @@
+from ultralytics import YOLO
+import cv2
+from google.colab.patches import cv2_imshow
+# Load YOLOv8 model
+model = YOLO("yolov8n.pt")
+# ---- STEP 1: Upload Image ----
+from google.colab import files
+uploaded = files.upload()
+# Get uploaded image filename
+image_path = list(uploaded.keys())[0]
+# Read the image
+img = cv2.imread(image_path)
+if img is None:
+    raise ValueError("Image not loaded! Check the file name.")
+# ---- STEP 2: Run YOLO detection ----
+results = model(image_path)
+# ---- STEP 3: Draw results on image ----
+annotated_img = results[0].plot()
+# ---- STEP 4: Show output in Colab ----
+cv2_imshow(annotated_img)
