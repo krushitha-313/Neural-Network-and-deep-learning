@@ -1,0 +1,59 @@
+import numpy as np
+import cv2
+import tensorflow as tf
+from tensorflow.keras import layers, models
+import random
+from google.colab.patches import cv2_imshow
+# -----------------------------
+# 1. Load MNIST Dataset
+# -----------------------------
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+# Normalize
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+# Add channel dimension
+x_train = x_train.reshape(-1, 28, 28, 1)
+x_test = x_test.reshape(-1, 28, 28, 1)
+# -----------------------------
+# 2. Build HIGH ACCURACY Model
+# -----------------------------
+model = models.Sequential([
+    layers.Input(shape=(28, 28, 1)),
+    layers.Conv2D(32, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+print("Training high-accuracy model… (20 sec)")
+model.fit(x_train, y_train, epochs=5, batch_size=64, verbose=1)
+# -----------------------------
+# 3. Generate TWO Random Digits
+# -----------------------------
+d1 = random.randint(0, 9)
+d2 = random.randint(0, 9)
+print(f"\nGenerated digits: {d1}, {d2}")
+# Create two separate 28x28 images
+img1 = np.zeros((28, 28), dtype=np.uint8)
+img2 = np.zeros((28, 28), dtype=np.uint8)
+# Put text (white handwritten-like)
+cv2.putText(img1, str(d1), (5, 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255), 2)
+cv2.putText(img2, str(d2), (5, 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255), 2)
+print("\nDigit Images:")
+cv2_imshow(img1)
+cv2_imshow(img2)
+# Reshape for model
+img1_input = img1.reshape(1, 28, 28, 1) / 255.0
+img2_input = img2.reshape(1, 28, 28, 1) / 255.0
+# -----------------------------
+# 4. Predict Both Digits
+# -----------------------------
+pred1 = np.argmax(model.predict(img1_input))
+pred2 = np.argmax(model.predict(img2_input))
+print(f"\nPredicted Digit 1: {pred1}")
+print(f"Predicted Digit 2: {pred2}")
