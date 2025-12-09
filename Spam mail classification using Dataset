@@ -1,0 +1,37 @@
+# pip install scikit-learn pandas
+
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+
+# Load dataset
+df = pd.read_csv("spam.csv")  # make sure columns are: label, message
+
+X_text = df["message"]
+y = df["label"].map({"ham": 0, "spam": 1})  # convert to 0/1
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_text, y, test_size=0.2, random_state=42, stratify=y
+)
+
+vectorizer = TfidfVectorizer(stop_words="english")
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
+
+model = MultinomialNB()
+model.fit(X_train_vec, y_train)
+
+y_pred = model.predict(X_test_vec)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+def predict_spam(message: str):
+    x = vectorizer.transform([message])
+    pred = model.predict(x)[0]
+    return "SPAM" if pred == 1 else "NOT SPAM"
+
+if __name__ == "__main__":
+    msg = input("Enter an email: ")
+    print("Prediction:", predict_spam(msg))
