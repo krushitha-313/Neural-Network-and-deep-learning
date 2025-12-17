@@ -1,0 +1,20 @@
+def huber_loss(y, y_pred, delta):
+    n = len(y)
+    total_loss = 0
+    for i in range(n):
+        error = abs(y[i] - y_pred[i])
+        if error <= delta:
+            total_loss += 0.5 * error**2
+        else:
+            total_loss += delta * (error - 0.5 * delta)
+    return total_loss / n
+# Example with 10 values
+y = [5, 8, 3, 6, 9, 4, 7, 2, 10, 1]
+y_pred = [5.7, 7.8, 3.4, 5.5, 8.6, 4.2, 6.8, 2.3, 9.5, 1.4]
+delta = 0.5
+loss = huber_loss(y, y_pred, delta)
+print("Given Data")
+print("Y:", y)
+print("Y Predicted:", y_pred)
+print("Delta:", delta)
+print("Huber Loss:", loss)
