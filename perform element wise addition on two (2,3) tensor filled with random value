@@ -1,0 +1,13 @@
+import torch
+
+# Create two random tensors of shape (2, 3)
+A = torch.rand(2, 3)
+B = torch.rand(2, 3)
+
+# Element-wise addition
+C = A + B
+
+# Display tensors
+print("Tensor A:\n", A)
+print("Tensor B:\n", B)
+print("Element-wise Addition (A + B):\n", C)
