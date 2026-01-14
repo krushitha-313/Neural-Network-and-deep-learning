@@ -1,0 +1,21 @@
+import random
+
+# Create two 2x3 tensors using lists with random values
+tensor1 = [[random.random() for j in range(3)] for i in range(2)]
+tensor2 = [[random.random() for j in range(3)] for i in range(2)]
+
+# Element-wise addition
+result = [[tensor1[i][j] + tensor2[i][j] for j in range(3)] for i in range(2)]
+
+# Print results
+print("Tensor 1:")
+for row in tensor1:
+    print(row)
+
+print("\nTensor 2:")
+for row in tensor2:
+    print(row)
+
+print("\nElement-wise Addition Result:")
+for row in result:
+    print(row)
